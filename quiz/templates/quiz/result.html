@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>測驗結果</title>
+    <style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+h1, h2 {
+    color: #2c3e50;
+    text-align: center;
+}
+button, .button {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 15px;
+    text-decoration: none;
+    text-align: center;
+}
+button:hover, .button:hover {
+    background: #219653;
+}
+.secondary {
+    background: #9b59b6;
+}
+.secondary:hover {
+    background: #8e44ad;
+}
+.warning {
+    background: #e67e22;
+}
+.warning:hover {
+    background: #d35400;
+}
+input[type="text"], select {
+    width: 100%;
+    max-width: 420px;
+    padding: 12px;
+    font-size: 1.05em;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    margin: 10px auto;
+    display: block;
+    text-align: center;
+}
+.question-card {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-left: 5px solid #3498db;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+.question-text {
+    font-size: 1.08em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.options label {
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.options label:hover {
+    background: #eef2f5;
+}
+.correct {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 5px;
+}
+.incorrect {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+}
+.explanation {
+    margin-top: 10px;
+    color: #555;
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+}
+.score-box {
+    background: #e8f8f5;
+    border: 2px solid #a3e4d7;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 1.1em;
+    line-height: 2;
+    margin-bottom: 25px;
+}
+.message {
+    padding: 12px;
+    border-radius: 6px;
+    background: #fff3cd;
+    color: #856404;
+    margin-bottom: 15px;
+}
+.badge {
+    text-align: center;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 6px;
+    background: #eef7ff;
+    color: #2c3e50;
+    border: 1px solid #bcdffb;
+    font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🎉 測驗完成！</h2>
+
+    <div class="score-box">
+        <div>👑 挑戰者：<strong>{{ nickname }}</strong></div>
+        <div>總分題數：<strong>{{ total_questions }} 題</strong></div>
+        <div>答對題數：<strong style="color:#27ae60;">{{ correct_count }} 題</strong></div>
+        <div>答錯題數：<strong style="color:#c0392b;">{{ wrong_count }} 題</strong></div>
+        <div>整體正確率：<strong>{{ accuracy }}%</strong></div>
+    </div>
+
+    <h2>答題詳情與錯題解析</h2>
+
+    {% for item in results %}
+        <div class="question-card">
+            <div class="question-text">
+                {{ forloop.counter }}. {{ item.question.text }}
+            </div>
+
+            {% if item.is_correct %}
+                <div class="correct">✅ 答對了！你的答案：{{ item.selected_choice.text }}</div>
+            {% else %}
+                <div class="incorrect">
+                    {% if item.is_unanswered %}
+                        ⚠️ 未作答。
+                    {% else %}
+                        ❌ 答錯了。你的答案：{{ item.selected_choice.text }}
+                    {% endif %}
+                    正確答案為：{{ item.correct_choice.text }}
+                </div>
+            {% endif %}
+
+            <div class="explanation">
+                <strong>解析：</strong>{{ item.question.explanation }}
+            </div>
+        </div>
+    {% endfor %}
+
+    <a class="button" href="{% url 'quiz:index' %}">回到首頁</a>
+</div>
+</body>
+</html>

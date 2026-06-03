@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>第九章 不相交集合線上測驗</title>
+    <style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+h1, h2 {
+    color: #2c3e50;
+    text-align: center;
+}
+button, .button {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin-top: 15px;
+    text-decoration: none;
+    text-align: center;
+}
+button:hover, .button:hover {
+    background: #219653;
+}
+.secondary {
+    background: #9b59b6;
+}
+.secondary:hover {
+    background: #8e44ad;
+}
+.warning {
+    background: #e67e22;
+}
+.warning:hover {
+    background: #d35400;
+}
+input[type="text"], select {
+    width: 100%;
+    max-width: 420px;
+    padding: 12px;
+    font-size: 1.05em;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    margin: 10px auto;
+    display: block;
+    text-align: center;
+}
+.question-card {
+    margin-bottom: 25px;
+    padding: 15px;
+    border-left: 5px solid #3498db;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+.question-text {
+    font-size: 1.08em;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.options label {
+    display: block;
+    padding: 10px;
+    margin: 5px 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.options label:hover {
+    background: #eef2f5;
+}
+.correct {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 5px;
+}
+.incorrect {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 5px;
+}
+.explanation {
+    margin-top: 10px;
+    color: #555;
+    background: #e9ecef;
+    padding: 10px;
+    border-radius: 5px;
+}
+.score-box {
+    background: #e8f8f5;
+    border: 2px solid #a3e4d7;
+    border-radius: 8px;
+    padding: 20px;
+    font-size: 1.1em;
+    line-height: 2;
+    margin-bottom: 25px;
+}
+.message {
+    padding: 12px;
+    border-radius: 6px;
+    background: #fff3cd;
+    color: #856404;
+    margin-bottom: 15px;
+}
+.badge {
+    text-align: center;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 6px;
+    background: #eef7ff;
+    color: #2c3e50;
+    border: 1px solid #bcdffb;
+    font-weight: bold;
+}
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>歡迎來到不相交集合線上測驗</h2>
+
+    {% for message in messages %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+
+    <p style="text-align:center;color:#666;">
+        題庫目前共有 {{ total_questions }} 題。請輸入暱稱並選擇本次測驗題數。
+    </p>
+
+    <form method="post" action="{% url 'quiz:start_quiz' %}">
+        {% csrf_token %}
+        <input type="text" name="nickname" placeholder="請輸入您的暱稱..." autocomplete="off" required>
+
+        <select name="question_count">
+            <option value="5">5 題</option>
+            <option value="10">10 題</option>
+            <option value="15">全部 15 題</option>
+        </select>
+
+        <input type="hidden" name="mode" value="normal">
+        <button type="submit">開始測驗</button>
+    </form>
+
+    {% if wrong_count > 0 %}
+        <form method="post" action="{% url 'quiz:start_quiz' %}">
+            {% csrf_token %}
+            <input type="text" name="nickname" placeholder="請輸入您的暱稱..." autocomplete="off" required>
+
+            <select name="question_count">
+                <option value="5">5 題</option>
+                <option value="10">10 題</option>
+                <option value="15">全部錯題</option>
+            </select>
+
+            <input type="hidden" name="mode" value="wrong">
+            <button class="secondary" type="submit">錯題複習模式，目前 {{ wrong_count }} 題</button>
+        </form>
+
+        <a class="button warning" href="{% url 'quiz:clear_wrong_book' %}">清除錯題紀錄</a>
+    {% else %}
+        <p style="text-align:center;color:#666;">
+            目前尚無錯題紀錄。完成測驗後，答錯題目會自動加入錯題本。
+        </p>
+    {% endif %}
+</div>
+</body>
+</html>
